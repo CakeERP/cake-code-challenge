@@ -1,6 +1,6 @@
-# Cake - Code Challenge
+# 🧁 Cake ERP - Code Challenge
 
-## Objetivo
+## 🚀 Objetivo
 
 O objetivo desse desafio é avaliar suas habilidades em áreas relevantes ao desenvolvimento back-end no CakeERP.
 
