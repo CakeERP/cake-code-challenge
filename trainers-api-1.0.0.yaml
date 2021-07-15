@@ -1,0 +1,855 @@
+---
+openapi: 3.0.0
+info:
+  title: Trainers API
+  description: "Trainer API used by CakeERP Back-end Challenge. Refer to the [pokemon REST \napi](https://pokeapi.co/docs/v2) and [cake-code-challenge](https://github.com/CakeERP/cake-code-challenge) for more information\n"
+  contact:
+    email: email@fernandocelmer.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/fernando.celmer/Trainers-api/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: trainer
+  description: Operations about trainer resource
+paths:
+  /trainer:
+    get:
+      tags:
+      - trainer
+      summary: List trainers based on parameters
+      description: |
+        Returns trainer based on parameters. If none is found, should return an
+        empty array.
+      operationId: getTrainerByNickname
+      parameters:
+      - name: nickname
+        in: query
+        description: The exact nickname of the trainer.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: nickname_contains
+        in: query
+        description: Returns trainers which nickname that contains given string.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Max number of returned objects.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Index offset from which listing starts at.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trainer'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - trainer
+      summary: Create a trainer
+      description: Creates a new trainer
+      operationId: createTrainer
+      requestBody:
+        description: Created trainer object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trainer'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trainer'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /trainer/authenticate:
+    post:
+      tags:
+      - trainer
+      summary: Authenticates the trainer and returns JWT
+      description: "Checks if the email and password are valid, and if true, \nreturns the JWT token along with id of the trainer\n"
+      requestBody:
+        description: Trainer email and password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "400":
+          description: Invalid input, object invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "500":
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /trainer/{trainerId}:
+    get:
+      tags:
+      - trainer
+      summary: Get trainer by id
+      description: |
+        Returns trainer with given ID.
+      operationId: getTrainerById
+      parameters:
+      - name: trainerId
+        in: path
+        description: The ID of the trainer.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trainer'
+        "404":
+          description: Trainer not found
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /trainer/{trainerId}/pokemon:
+    get:
+      tags:
+      - trainer
+      summary: List pokemons owned by trainer with given ID
+      description: "Returns pokemons owned by Trainer with given ID. The pokemon_data and \nschema should be provided by [pokemon REST api](https://pokeapi.co/docs/v2#pokemon).\n"
+      operationId: listPokemonByTrainerId
+      parameters:
+      - name: trainerId
+        in: path
+        description: The ID of the trainer.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      - name: limit
+        in: query
+        description: Max number of returned objects.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      - name: offset
+        in: query
+        description: Index offset from which listing starts at.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PokemonOwned'
+        "404":
+          description: Trainer not found
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+      - trainer
+      summary: Adds pokemon owned by trainer with given ID
+      description: |
+        Adds owned pokemon to trainer. This operation should only be performed
+        by the trained with the trainer_id claim on the JWTtoken with the same
+        value as trainerId.
+      operationId: createOwnedPokemon
+      parameters:
+      - name: trainerId
+        in: path
+        description: The ID of the trainer.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int32
+      requestBody:
+        description: Owned Pokemon datta
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PokemonOwned'
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PokemonOwned'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+  /trainer/{trainerId}/pokemon/{pokemonId}:
+    get:
+      tags:
+      - trainer
+      summary: Get pokemons owned by trainer
+      description: "Returns pokemon owned by Trainer with given ID. The pokemon_data and \nschema should be provided by [pokemon REST api](https://pokeapi.co/docs/v2#pokemon).\n"
+      operationId: getPokemonById
+      parameters:
+      - name: trainerId
+        in: path
+        description: The ID of the trainer.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      - name: pokemonId
+        in: path
+        description: The ID of the pokemon.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PokemonOwned'
+        "404":
+          description: Trainer or Pokemon not found
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+      - trainer
+      summary: Deletes pokemons owned by trainer
+      description: |
+        Deletes pokemon owned by Trainer with given ID. This operation should
+        only be performed by the trained with the trainer_id on the JWT token
+        with the same value as trainerId.
+      operationId: deletePokemonById
+      parameters:
+      - name: trainerId
+        in: path
+        description: The ID of the trainer.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      - name: pokemonId
+        in: path
+        description: The ID of the pokemon.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          minimum: 1
+          type: integer
+          format: int64
+      responses:
+        "204":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PokemonOwned'
+        "401":
+          description: Not authorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        "404":
+          description: Trainer or Pokemon not found
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - bearerAuth: []
+components:
+  schemas:
+    Trainer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 3
+        nickname:
+          type: string
+          example: ash
+        first_name:
+          type: string
+          example: Ash
+        last_name:
+          type: string
+          example: Kutchum
+        email:
+          type: string
+          writeOnly: true
+          example: ash@pokemon.com
+        password:
+          type: string
+          writeOnly: true
+          example: coxinha123
+        team:
+          type: string
+          enum:
+          - Team Valor
+          - Team Instinct
+          - Team Mystic
+        pokemons_owned:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 3
+    Pokemon:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 12
+        name:
+          type: string
+          example: butterfree
+        base_experience:
+          type: integer
+          format: int64
+          example: 179
+        height:
+          type: integer
+          format: int64
+          example: 11
+        is_default:
+          type: boolean
+          example: true
+        order:
+          type: integer
+          format: int64
+          example: 16
+        weight:
+          type: integer
+          format: int64
+          example: 320
+        abilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_abilities'
+        forms:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_forms'
+        game_indices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_game_indices'
+        held_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_held_items'
+        location_area_encounters:
+          type: string
+          example: https://pokeapi.co/api/v2/pokemon/12/encounters
+        moves:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_moves'
+        species:
+          $ref: '#/components/schemas/Pokemon_species'
+        sprities:
+          $ref: '#/components/schemas/Pokemon_sprities'
+        stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_stats'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_types'
+      description: Pokemon data provided by [pokemon REST api](https://pokeapi.co/docs/v2#pokemon).
+    PokemonOwned:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 2
+        name:
+          type: string
+          example: Fluffy
+        level:
+          type: integer
+          format: int64
+          example: 4
+        pokemon_id:
+          type: integer
+          description: Pokemon ID on the Pokemon API
+          format: int64
+          writeOnly: true
+          example: 12
+        pokemon_data:
+          type: object
+          description: Pokemon data provided by [pokemon REST api](https://pokeapi.co/docs/v2#pokemon).
+          readOnly: true
+          allOf:
+          - $ref: '#/components/schemas/Pokemon'
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+    body:
+      type: object
+      properties:
+        email:
+          type: string
+          example: email@email.com
+        password:
+          type: string
+          example: coxinha123
+    inline_response_200:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The id of the trainer
+          format: int64
+          example: 10
+        token:
+          type: string
+          description: The JWT token used for authorization
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0cmFpbmVyX2lkIjoiMTIifQ._ScBME0hLYJIevX1n_WCwD6UODHo53cgdrLux13uEoQ
+    Pokemon_ability:
+      type: object
+      properties:
+        name:
+          type: string
+          example: tinted-lens
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/ability/110/
+    Pokemon_abilities:
+      type: object
+      properties:
+        is_hidden:
+          type: boolean
+          example: true
+        slot:
+          type: integer
+          format: int64
+          example: 3
+        ability:
+          $ref: '#/components/schemas/Pokemon_ability'
+    Pokemon_forms:
+      type: object
+      properties:
+        name:
+          type: string
+          example: butterfree
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/pokemon-form/12/
+    Pokemon_version:
+      type: object
+      properties:
+        name:
+          type: string
+          example: white-2
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/version/22/
+    Pokemon_game_indices:
+      type: object
+      properties:
+        game_index:
+          type: integer
+          format: int64
+          example: 12
+        version:
+          $ref: '#/components/schemas/Pokemon_version'
+    Pokemon_items:
+      type: object
+      properties:
+        name:
+          type: string
+          example: silver-powder
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/item/199/
+    Pokemon_version_1:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "y"
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/version/24/
+    Pokemon_version_details:
+      type: object
+      properties:
+        rarity:
+          type: integer
+          format: int64
+          example: 5
+        version:
+          $ref: '#/components/schemas/Pokemon_version_1'
+    Pokemon_held_items:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/Pokemon_items'
+        version_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_version_details'
+    Pokemon_move:
+      type: object
+      properties:
+        name:
+          type: string
+          example: flash
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/move/148/
+    Pokemon_version_group:
+      type: object
+      properties:
+        name:
+          type: string
+          example: x-y
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/version-group/15/
+    Pokemon_move_learn_method:
+      type: object
+      properties:
+        name:
+          type: string
+          example: machine
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/move-learn-method/4/
+    Pokemon_version_group_details:
+      type: object
+      properties:
+        level_learned_at:
+          type: integer
+          format: int64
+        version_group:
+          $ref: '#/components/schemas/Pokemon_version_group'
+        move_learn_method:
+          $ref: '#/components/schemas/Pokemon_move_learn_method'
+    Pokemon_moves:
+      type: object
+      properties:
+        move:
+          $ref: '#/components/schemas/Pokemon_move'
+        version_group_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_version_group_details'
+    Pokemon_species:
+      type: object
+      properties:
+        name:
+          type: string
+          example: butterfree
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/pokemon-species/12/
+    Pokemon_sprities_other:
+      type: object
+      properties:
+        dream_world:
+          type: object
+        official-artwork:
+          type: object
+    Pokemon_sprities_generationi:
+      type: object
+      properties:
+        red-blue:
+          type: object
+        yellow:
+          type: object
+    Pokemon_sprities_generationii:
+      type: object
+      properties:
+        crystal:
+          type: object
+        gold:
+          type: object
+        silve:
+          type: object
+    Pokemon_sprities_generationiii:
+      type: object
+      properties:
+        emerald:
+          type: object
+        firered-leafgreen:
+          type: object
+        ruby-sapphire:
+          type: object
+    Pokemon_sprities_generationiv:
+      type: object
+      properties:
+        diamond-pearl:
+          type: object
+        hearthgold-soulsilver:
+          type: object
+        platinum:
+          type: object
+    Pokemon_sprities_generationv:
+      type: object
+      properties:
+        black-white:
+          type: object
+    Pokemon_sprities_generationv1:
+      type: object
+      properties:
+        omegaruby-alphasapphire:
+          type: object
+        x-y:
+          type: object
+    Pokemon_sprities_generationvii:
+      type: object
+      properties:
+        icons:
+          type: object
+        ultra-sun-ultra-moon:
+          type: object
+    Pokemon_sprities_generationviii:
+      type: object
+      properties:
+        icons:
+          type: object
+    Pokemon_sprities_versions:
+      type: object
+      properties:
+        generation-i:
+          $ref: '#/components/schemas/Pokemon_sprities_generationi'
+        generation-ii:
+          $ref: '#/components/schemas/Pokemon_sprities_generationii'
+        generation-iii:
+          $ref: '#/components/schemas/Pokemon_sprities_generationiii'
+        generation-iv:
+          $ref: '#/components/schemas/Pokemon_sprities_generationiv'
+        generation-v:
+          $ref: '#/components/schemas/Pokemon_sprities_generationv'
+        generation-v1:
+          $ref: '#/components/schemas/Pokemon_sprities_generationv1'
+        generation-vii:
+          $ref: '#/components/schemas/Pokemon_sprities_generationvii'
+        generation-viii:
+          $ref: '#/components/schemas/Pokemon_sprities_generationviii'
+    Pokemon_sprities:
+      type: object
+      properties:
+        back_female:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/back/female/12.png
+        back_shiny_female:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/back/shiny/female/12.png
+        back_default:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/back/12.png
+        front_female:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/female/12.png
+        front_shiny_female:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/shiny/female/12.png
+        back_shiny:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/back/shiny/12.png
+        front_default:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/12.png
+        front_shiny:
+          type: string
+          example: http://pokeapi.co/media/sprites/pokemon/shiny/12.png
+        other:
+          $ref: '#/components/schemas/Pokemon_sprities_other'
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pokemon_sprities_versions'
+    Pokemon_stat:
+      type: object
+      properties:
+        name:
+          type: string
+          example: speed
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/stat/6/
+    Pokemon_stats:
+      type: object
+      properties:
+        base_stat:
+          type: integer
+          format: int64
+          example: 70
+        effort:
+          type: integer
+          format: int64
+          example: 0
+        stat:
+          $ref: '#/components/schemas/Pokemon_stat'
+    Pokemon_type:
+      type: object
+      properties:
+        name:
+          type: string
+          example: flying
+        url:
+          type: string
+          example: https://pokeapi.co/api/v2/type/3/
+    Pokemon_types:
+      type: object
+      properties:
+        slot:
+          type: integer
+          format: int64
+          example: 2
+        type:
+          $ref: '#/components/schemas/Pokemon_type'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: JWT bearer with trainer_id on the claim
+      scheme: bearer
+      bearerFormat: JWT
