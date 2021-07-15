@@ -38,6 +38,7 @@ novo recurso _trainer_.
 - A escolha de tecnologia fica a critério do avaliado, mas uma explicação do
 motivo da escolha é sempre bem vinda.
 - Um resumo de como foi feito o desenvolvimento, bem como um plano para as implementações que gostaria de ter feito.
+- Entregue o que você conseguir fazer.
 
 ## Como entregar
 
