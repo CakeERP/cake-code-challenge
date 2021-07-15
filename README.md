@@ -27,6 +27,9 @@ novo recurso _trainer_.
 - [ ] Testes unitários
 - [ ] Readme com instruções de como instalar, fazer funcionar e etc.
 
+Esse recurso possui o contrato a ser implementado disponível em [Trainers API](https://app.swaggerhub.com/apis/fernando.celmer/trainers-api/1.0.0) e também
+fornecido no formato OpenAPI 3.0.
+
 ## O que vamos avaliar?
 
 - Boas práticas no tratamento das requisições
