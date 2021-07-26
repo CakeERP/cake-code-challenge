@@ -38,6 +38,7 @@ fornecido no formato OpenAPI 3.0.
 
 ## Ponto extras
 
+- Se possível colocar projeto disponível em um link público para visualização e teste.
 - A escolha de tecnologia fica a critério do avaliado, mas uma explicação do
 motivo da escolha é sempre bem vinda.
 - Um resumo de como foi feito o desenvolvimento, bem como um plano para as implementações que gostaria de ter feito.
