@@ -21,8 +21,6 @@ novo recurso _trainer_.
 ## O que preciso fazer?
 
 - [ ] CRUD do recurso Trainer
-- [ ] Implementar o contrato da API fornecido em OpenAPI 3.0
-- [ ] Implementar autenticação com JWT
 - [ ] Consumir a  [PokéAPI](https://pokeapi.co/)
 - [ ] Testes unitários
 - [ ] Readme com instruções de como instalar, fazer funcionar e etc.
@@ -38,6 +36,8 @@ fornecido no formato OpenAPI 3.0.
 
 ## Ponto extras
 
+- Implementar o contrato da API fornecido em OpenAPI 3.0
+- Implementar autenticação com JWT
 - Se possível colocar projeto disponível em um link público para visualização e teste.
 - A escolha de tecnologia fica a critério do avaliado, mas uma explicação do
 motivo da escolha é sempre bem vinda.
