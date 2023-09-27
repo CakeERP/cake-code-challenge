@@ -8,7 +8,7 @@ Isso inclui:
 
 - Habilidade de criar, utilizar e interagir com outras APIs REST.
 - Conhecimentos em criar e implementar um serviço básico, utilizando boas práticas para oferecer uma codebase _maintainable_ e expansível.
-- Experiência com frameworks web para criar um codigo limpo, legível e performático, porém o uso de framework não é obrigatório.
+- Experiência com frameworks web para criar um código limpo, legível e performático, porém o uso de framework não é obrigatório.
 
 **Palavras-chave**
 Funcionalidade | Formatação | Estrutura do Projeto | Escalabilidade | Manutenção | Boas práticas de mercado
