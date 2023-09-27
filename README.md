@@ -47,4 +47,4 @@ motivo da escolha é sempre bem vinda.
 
 ## Como entregar
 
-Crie um repositório público (onde você preferir e compartilhe o link com a gente).
+Crie um repositório público no GitHub e compartilhe o link com a gente.
