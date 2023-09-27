@@ -20,6 +20,7 @@ novo recurso _trainer_.
 
 ## O que preciso fazer?
 
+- [ ] Publicar o projeto no GitHub
 - [ ] CRUD do recurso Trainer
 - [ ] Consumir a  [PokéAPI](https://pokeapi.co/)
 - [ ] Testes unitários
